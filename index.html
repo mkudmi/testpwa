@@ -16,11 +16,38 @@
         }
         h1 {
             font-size: 3em;
+            text-align: center;
+        }
+
+        /* Стили для кнопки на мобильных устройствах */
+        #installButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            z-index: 1000;
+            display: none; /* По умолчанию скрыта */
+        }
+
+        /* Мобильные стили для отображения кнопки */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            #installButton {
+                display: block; /* Показываем кнопку на мобильных устройствах */
+            }
         }
     </style>
 </head>
 <body>
     <h1>Привет!</h1>
+    <button id="installButton">Скачать приложение</button>
 
     <script>
         // Регистрация сервис-воркера для PWA
@@ -36,15 +63,16 @@
 
         // Обработка события установки PWA
         let deferredPrompt;
+        const installButton = document.getElementById('installButton');
+
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
 
-            const installButton = document.createElement('button');
-            installButton.textContent = 'Скачать приложение';
-            installButton.style.cssText = 'position: fixed; bottom: 20px; right: 20px; padding: 10px 20px; background-color: #4CAF50; color: white; border-radius: 5px; border: none; cursor: pointer; z-index: 1000;';
-            
-            document.body.appendChild(installButton);
+            // Показываем кнопку только на мобильных устройствах
+            if (window.innerWidth <= 768) {
+                installButton.style.display = 'block';
+            }
 
             installButton.addEventListener('click', () => {
                 deferredPrompt.prompt();
@@ -54,7 +82,7 @@
                     } else {
                         console.log('Установка отклонена');
                     }
-                    installButton.remove();
+                    installButton.style.display = 'none';
                 });
             });
         });
