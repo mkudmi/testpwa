@@ -33,6 +33,31 @@
                     console.log('Ошибка регистрации Service Worker:', error);
                 });
         }
+
+        // Обработка события установки PWA
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+
+            const installButton = document.createElement('button');
+            installButton.textContent = 'Скачать приложение';
+            installButton.style.cssText = 'position: fixed; bottom: 20px; right: 20px; padding: 10px 20px; background-color: #4CAF50; color: white; border-radius: 5px; border: none; cursor: pointer; z-index: 1000;';
+            
+            document.body.appendChild(installButton);
+
+            installButton.addEventListener('click', () => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(choiceResult => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Приложение установлено');
+                    } else {
+                        console.log('Установка отклонена');
+                    }
+                    installButton.remove();
+                });
+            });
+        });
     </script>
 </body>
 </html>
